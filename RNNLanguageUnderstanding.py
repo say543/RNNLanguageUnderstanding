@@ -4,9 +4,24 @@ import os
 import math
 import numpy as np
 
+
+# good github
+# spanish might be useless
+# https://github.com/chsasank/ATIS.keras
+# https://chsasank.github.io/spoken-language-understanding.html
+# multi turn
+# https://github.com/yvchen/ContextualSLU
+# data set download location
+# https://github.com/Microsoft/CNTK/tree/v2.0/Examples/LanguageUnderstanding/ATIS
+
+# cntj
 import cntk as C
 
-
+# Using TensorFlow backend.
+# so need to pip install tensorflow
+from keras.models import Model, Sequential
+from keras.layers import GRU, Dense, RepeatVector, TimeDistributed, Flatten, Input
+from keras.callbacks import EarlyStopping
 
 locations = ['Tutorials/SLUHandsOn', 'Examples/LanguageUnderstanding/ATIS/BrainScript']
 
@@ -49,12 +64,44 @@ x = C.sequence.input_variable(vocab_size)
 y = C.sequence.input_variable(num_labels)
 
 def create_model():
+
+    # cntk layer embedding
+    # https://www.cntk.ai/pythondocs/layerref.html#embedding
+    # dense
+    # https://www.cntk.ai/pythondocs/layerref.html#dense
+
     with C.layers.default_options(initial_state=0.1):
         return C.layers.Sequential([
             C.layers.Embedding(emb_dim, name='embed'),
             C.layers.Recurrence(C.layers.LSTM(hidden_dim), go_backwards=False),
             C.layers.Dense(num_labels, name='classify')
         ])
+
+def create_keras_model():
+
+    model = Sequential()
+    # embedding
+    #  (batch, input_length).
+    # https://machinelearningmastery.com/use-word-embedding-layers-deep-learning-keras/
+    # https://keras.io/layers/embeddings/
+
+
+
+
+    #model.add(Embedding(1000, 64, input_length=10))
+    # only use the input and output accordingly
+    model.add(Embedding(vocab_size, emb_dim))
+    # no the first layer so need to specify input_shape
+    # go backwards is useless just follow CNF
+    model.add(GRU(hidden_dim, go_backwards =False))
+    # Dense
+    # https://www.cntk.ai/pythondocs/layerref.html#dense
+    #  Dense(64) 是一个具有 64 个隐藏神经元的全连接层。
+    # should be output labels size i think
+    # do not care avtivation function at this point
+    model.add(Dense(num_labels))
+    
+    
 
 def create_reader(path, is_training):
 
