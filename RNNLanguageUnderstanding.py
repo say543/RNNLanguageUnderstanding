@@ -406,8 +406,8 @@ def train_keras(train_x, train_label):
     #We will pass each sentence as a batch to the model. We cannot use model.fit() as it expects all the sentences to be of same size. We will therefore use model.train_on_batch(). 
 
     # to speed up, only two epochs
-    n_epochs = 2
-    #n_epochs = 30
+    #n_epochs = 2
+    n_epochs = 30
 
 
 
