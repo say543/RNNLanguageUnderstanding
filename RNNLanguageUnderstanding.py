@@ -22,6 +22,9 @@ import progressbar
 # i prefer to use other things to do precision and recall calculation
 
 
+# for update pip from 9.0.1 to 10.0.1
+# using pip --upgrade in visual studio
+
 
 # good github
 # spanish might be useless
@@ -36,6 +39,14 @@ import progressbar
 
 # cnovert keras model into tensorflow
 # http://www.pythonexample.com/code/convert-keras-model-to-tensorflow/
+
+# dump keras model and load_model
+# https://jovianlin.io/saving-loading-keras-models/
+# Import dependencies
+import json
+from keras.models import model_from_json, load_model
+
+
 
 
 # cntk scripts
@@ -68,6 +79,13 @@ data = {
   'c': { 'file': '..\\query.wl', 'location': 1 },
   'slots': { 'file': '..\\slots.wl', 'location': 1 }
 }
+
+####################################################
+# running node configuration
+LOADING_MODEL = True
+DUMPING_MODEL = True
+####################################################
+
 
 if 'TEST_DEVICE' in os.environ:
     if os.environ['TEST_DEVICE'] == 'cpu':
@@ -364,11 +382,32 @@ def train_keras(reader, max_epochs=10):
 
 def train_keras(train_x, train_label):
 
+    # extend global as range
+    global kerasZ
+
+
+    if LOADING_MODEL:
+        try:
+            with open('kerasZ_architecture.json', 'r') as f:
+                kerasZ = model_from_json(f.read())
+            kerasZ.load_weights('kerasZ_weights.h5')
+        except ValueError as excep:
+            print ("input argument in valid: %s" % (excep))
+        except Exception:
+            print ("unknown exception, something wrong")
+        finally:
+            if f is not None:
+                f.close()
+
+        return
+
+
+
     #We will pass each sentence as a batch to the model. We cannot use model.fit() as it expects all the sentences to be of same size. We will therefore use model.train_on_batch(). 
 
     # to speed up, only two epochs
-    #n_epochs = 2
-    n_epochs = 30
+    n_epochs = 2
+    #n_epochs = 30
 
 
 
@@ -424,6 +463,13 @@ def train_keras(train_x, train_label):
                 # https://keras.io/models/sequential/
                 kerasZ.train_on_batch(sent, label)
 
+
+    # save the model
+    if DUMPING_MODEL:
+        kerasZ.save_weights('kerasZ_weights.h5')
+        with open('kerasZ_architecture.json', 'w') as f:
+            f.write(kerasZ.to_json())
+   
 
 
 def prepare_keras_data(filename):
