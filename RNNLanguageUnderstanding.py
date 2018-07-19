@@ -391,6 +391,7 @@ def train_keras(train_x, train_label):
             with open('kerasZ_architecture.json', 'r') as f:
                 kerasZ = model_from_json(f.read())
             kerasZ.load_weights('kerasZ_weights.h5')
+            print("loading model success without training")
         except ValueError as excep:
             print ("input argument in valid: %s" % (excep))
         except Exception:
@@ -398,8 +399,7 @@ def train_keras(train_x, train_label):
         finally:
             if f is not None:
                 f.close()
-
-        return
+                return
 
 
 
