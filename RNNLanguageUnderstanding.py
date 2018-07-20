@@ -190,6 +190,37 @@ def create_keras_model():
     ###########################################################
     model = Sequential()
     model.add(Embedding(vocab_size, emb_dim))
+
+    # improvement
+    # https://keras.io/layers/convolutional/
+    # this is covID
+    # # (filters, kernal_size = 1D convolution window) 
+    # https://faroit.github.io/keras-docs/1.0.1/layers/convolutional/
+    # this is convolutionID
+    # here goes with the second one
+    # model.add(Convolution1D(128, 5, border_mode='same', activation='relu'))
+    # nb_filter: Number of convolution kernels to use (dimensionality of the output)
+    # filter_length: The extension (spatial or temporal) of each filter
+    # it will be extend to dimention of each embedded dimention snice here using it
+
+    # border_mode: 'valid' or 'same'.) 
+    # one 1-d explannation
+    # https://blog.csdn.net/qq_19707521/article/details/78486185
+    # https://blog.csdn.net/momaojia/article/details/65641430
+    # model.add(Convolution1D(64, 3, border_mode='same', input_shape=(10, 32)))
+    # in fact, convoluation 1d input_shaep(length - word length ,width - word _dim)
+    # output  why 10 X 64 ?
+    # 64 does make sense
+    #  i think should be (10-3+1) x 64
+    #  ? i think it is becasue leras will try to extend size to meet target
+    # ? paramter estimation 
+    # ? i think +1 becasue leras will try to extend size to meet target
+    # each filter , (3X 32 +1)
+    # number of filter is 64 
+    
+
+
+
     # follow link to dropout, not sure if it is useful or not
     model.add(Dropout(0.25))
     # i go with  the hidden_dim
